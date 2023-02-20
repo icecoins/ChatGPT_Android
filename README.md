@@ -1,4 +1,8 @@
-# chat
+# ChatGPT_Android
 an android demo to use openai's api
 
-安装报毒别找我，自己下源码回去检查，觉得没问题了再自己编译
+# usage
+check the configs first, confirm your api_key is available.
+
+
+connected to the Internet.
