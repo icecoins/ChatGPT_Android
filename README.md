@@ -5,7 +5,9 @@ an android demo to use openai's api
 
 # 注意： 关于api_key失效
 api_key一旦被官方检测到多人使用就会自动失效
+
 api_key一旦被官方检测到多人使用就会自动失效
+
 api_key一旦被官方检测到多人使用就会自动失效
 
 
