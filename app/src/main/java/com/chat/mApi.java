@@ -6,30 +6,15 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Looper;
-import android.text.InputFilter;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.io.EOFException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.charset.UnsupportedCharsetException;
-import java.util.Arrays;
 import java.util.Objects;
-
-import okhttp3.MediaType;
-import okhttp3.ResponseBody;
-import okio.Buffer;
-import okio.BufferedSource;
-
 public class mApi {
     public static SharedPreferences sharedPreferences;
     private static Toast t1;
-
     public static long RequestTimeout = 3600;
     public static int max_token = 1000;
     public static int max_history = 30;
@@ -59,15 +44,6 @@ public class mApi {
         }catch (Exception e){
             e.printStackTrace();
         }
-    }
-    static boolean isNum(String s){
-        String[] a = {"0","1","2","3","4","5","6","7","8","9"};
-        for(String c : a){
-            if(s.equals(c)){
-                return true;
-            }
-        }
-        return false;
     }
 
     public static void setFullscreen(AppCompatActivity activity) {

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_margin="20dp"
-    tools:context=".Chat2">
+    tools:context=".Chat">
 
     <TextView
         android:id="@+id/title"
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="CHAT"
+        android:text="@string/chat"
         android:textSize="25sp"
         android:gravity="center"
         />
@@ -33,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_marginTop="20dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:orientation="horizontal"
         android:layout_marginBottom="20dp"
         >
@@ -64,7 +64,7 @@
             />
         <EditText
             android:id="@+id/input"
-            android:hint="在此处输入文本"
+            android:hint="@string/input_text"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="6"

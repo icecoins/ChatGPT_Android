@@ -14,7 +14,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".Chat2"
+            android:name=".Chat"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
