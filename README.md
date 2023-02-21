@@ -6,7 +6,8 @@ an android demo to use openai's api
 # 注意： 关于api_key失效
 api_key一旦被官方检测到一个key被多人使用就会自动失效
 
-一个openai账号可以维持最多五个api key，这些key可以由五个人同时使用
+一个openai账号可以维持最多五个api key，也就是说可以让五个人分别专用一个账号下不同的key
+
 
 # usage
 check the configs first, confirm your api_key is available.
