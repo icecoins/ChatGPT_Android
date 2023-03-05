@@ -6,6 +6,8 @@ an android demo to use openai's api
 # !!!注意：api.openai.com已经被gfw dnssni了
 没得玩了散了吧
 
+或者蹲一手服务器中转版
+
 # 注意： 关于api_key失效
 api_key一旦被官方检测到一个key被多人使用就会自动失效
 
