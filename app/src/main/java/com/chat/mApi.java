@@ -19,7 +19,7 @@ public class mApi {
     public static int max_token = 1000;
     public static int max_history = 30;
     public static double temperature = 0.5;
-    public static String model = "text-davinci-003";
+    public static String model = "text-davinci-003", use_vps = "None", custom_url = "";
     public static boolean stream = true;
     public static String API_KEY = "";
     public static void showMsg(Context ct, String s){

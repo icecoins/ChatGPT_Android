@@ -28,10 +28,10 @@ android {
 
     defaultConfig {
         applicationId "com.chat"
-        minSdk 26
+        minSdk 27
         targetSdk 33
-        versionCode 26
-        versionName "2.3.2"
+        versionCode 28
+        versionName "2.3.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -40,7 +40,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
-            multiDexEnabled false
+            multiDexEnabled true
         }
     }
     compileOptions {
@@ -57,4 +57,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.10'
+    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
 }

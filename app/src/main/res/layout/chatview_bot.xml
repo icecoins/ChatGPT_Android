@@ -8,22 +8,23 @@
     android:padding="10dp">
 
     <ImageView
-        android:id="@+id/icon_in"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="50dp"
-        android:src="@mipmap/loop1"
+        android:layout_height="30dp"
+        android:src="@mipmap/bot_icon"
         android:layout_gravity="top"
+        android:layout_marginEnd="10dp"
         />
     <TextView
         android:id="@+id/text_in"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="7"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:textIsSelectable="true"
         android:textColor="@color/black"
         android:gravity="start"
+        android:background="#6DC5F1"
         android:layout_marginStart="10dp"
         />
  </LinearLayout>

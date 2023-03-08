@@ -8,7 +8,7 @@
     tools:context=".Chat">
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/chat_title"
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -28,6 +28,8 @@
         android:textSize="16sp"
         android:textColor="#13ABF1"
         android:scrollbars="vertical"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
         />
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,7 +45,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:src="@mipmap/deletetask5x"
+            android:src="@mipmap/delete_history"
             tools:ignore="NestedWeights" />
         <ImageView
             android:id="@+id/help"
@@ -61,6 +63,15 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:src="@mipmap/config"
+            />
+        <ImageView
+            android:id="@+id/connect"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:src="@mipmap/connect_vps"
             />
         <EditText
             android:id="@+id/input"
@@ -81,7 +92,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
-            android:src="@mipmap/play1"
+            android:src="@mipmap/send_msg"
             />
     </LinearLayout>
 

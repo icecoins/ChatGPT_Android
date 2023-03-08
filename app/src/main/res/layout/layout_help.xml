@@ -6,22 +6,115 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_gravity="center"
-        android:layout_weight="1"
+        android:layout_weight="1.5"
         android:layout_marginTop="20dp"
         android:layout_height="0dp"
-        android:text="@string/QandA"
+        android:text="@string/FAQ"
         android:gravity="center"
-        android:textSize="28sp"
+        android:textSize="24sp"
         android:textColor="@color/red"
         />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        >
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            android:src="@mipmap/delete_history"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="17sp"
+            android:text="清除AI之前的对话记忆"
+            android:textColor="@color/black"
+            tools:ignore="NestedWeights" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        >
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            android:src="@mipmap/help"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="17sp"
+            android:text="显示帮助信息 FAQ"
+            android:textColor="@color/black"
+            tools:ignore="NestedWeights" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        >
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            android:src="@mipmap/config"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="17sp"
+            android:text="修改配置信息"
+            android:textColor="@color/black"
+            tools:ignore="NestedWeights" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="2"
+        android:layout_marginTop="10dp"
+        >
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            android:src="@mipmap/connect_vps"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="15sp"
+            android:text="（强制重新）连接至中转服务器。\n若服务器长时间无响应，请重新连接。"
+            android:textColor="@color/black"
+            tools:ignore="NestedWeights" />
+    </LinearLayout>
     <TextView
         android:id="@+id/layout_help_text"
         android:layout_width="match_parent"
-        android:layout_weight="15"
+        android:layout_weight="20"
         android:layout_height="0dp"
         android:layout_margin="10dp"
         android:layout_gravity="center"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:textColor="@color/black"
         android:scrollbars="vertical"
         android:text="@string/help_text"
@@ -31,7 +124,7 @@
         android:layout_weight="1"
         android:layout_height="0dp"
         android:autoLink="web"
-        android:textSize="18sp"
+        android:textSize="13sp"
         android:text="@string/github_link"
         android:layout_gravity="center"
         />
