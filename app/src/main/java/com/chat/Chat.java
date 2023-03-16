@@ -19,17 +19,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.alibaba.fastjson.JSONObject;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -150,6 +149,7 @@ public class Chat extends AppCompatActivity {
                     case 2:
                         // User' msg
                         closeInputMethod();
+                        input.setText("");
                         if(history.size() >= mApi.max_history){
                             history.remove(0);
                             history.remove(0);
@@ -271,25 +271,36 @@ public class Chat extends AppCompatActivity {
         return prompt.toString();
     }
     void chatGPT_direct(){
-        String endpoint = "https://api.openai.com/v1/completions";
+        String endpoint;
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .connectTimeout(mApi.RequestTimeout, TimeUnit.SECONDS)
                 .writeTimeout(mApi.RequestTimeout, TimeUnit.SECONDS)
                 .readTimeout(mApi.RequestTimeout, TimeUnit.SECONDS)
                 .build();
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("model",mApi.model);
-            jsonObject.put("prompt", buildPrompt());
-            jsonObject.put("max_tokens",mApi.max_token);
-            jsonObject.put("temperature",mApi.temperature);
-            jsonObject.put("top_p",1);
-            jsonObject.put("stream",mApi.stream);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
+        jsonObject.put("model",mApi.model);
+        jsonObject.put("prompt", buildPrompt());
+        jsonObject.put("max_tokens",mApi.max_token);
+        jsonObject.put("temperature",mApi.temperature);
+        jsonObject.put("top_p",1);
+        jsonObject.put("stream",mApi.stream);
+        if(mApi.model.equals("gpt-3.5-turbo") || mApi.model.equals("gpt-3.5-turbo-0301")){
+            endpoint = "https://api.openai.com/v1/chat/completions";
+            List<JSONObject> list = new ArrayList<>();
+            JSONObject msg1 = new JSONObject();
+            msg1.put("role", "user");
+            msg1.put("content", "我是小明");
+            list.add(msg1);
+            JSONObject msg = new JSONObject();
+            msg.put("role", "user");
+            msg.put("content", jsonObject.getString("prompt"));
+            list.add(msg);
+            jsonObject.put("messages", list);
+            jsonObject.remove("prompt");
+        }else{
+            endpoint = "https://api.openai.com/v1/completions";
         }
         sendHandlerMsg(USER_MSG, input.getText().toString());
-        input.setText("");
         Request request = new Request.Builder()
                 .url(endpoint)
                 .addHeader("Content-Type", "application/json")
@@ -297,7 +308,6 @@ public class Chat extends AppCompatActivity {
                 .post(RequestBody.create(jsonObject.toString(),
                         MediaType.parse("application/json")))
                 .build();
-
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -308,25 +318,31 @@ public class Chat extends AppCompatActivity {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                     String line;
                     StringBuilder res = new StringBuilder();
-                    while ((line = reader.readLine()) != null) {
-                        if(line.length()<50){
-                            continue;
-                        }
-                        try {
-                            JSONObject object = new JSONObject(line.substring(6));
-                            JSONObject text = new JSONObject(object.getString("choices")
+                    try {
+                        while ((line = reader.readLine()) != null) {
+                            if(line.length()<50){
+                                continue;
+                            }
+                            JSONObject object = JSONObject.parseObject(line.substring(6));
+                            JSONObject choices = JSONObject.parseObject(object.getString("choices")
                                     .replace('[',' ')
                                     .replace(']',' '));
-                            String s = text.getString("text");
+                            String s;
+                            if(mApi.model.equals("gpt-3.5-turbo") || mApi.model.equals("gpt-3.5-turbo-0301")){
+                                s = JSONObject.parseObject(choices.getString("delta")).getString("content");
+                            }else {
+                                s = choices.getString("text");
+                            }
                             res.append(s);
                             sendHandlerMsg(BOT_CONTINUE, s);
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
                         }
+                        reader.close();
+                        inputStream.close();
+                        sendHandlerMsg(BOT_END, res.toString());
                     }
-                    reader.close();
-                    inputStream.close();
-                    sendHandlerMsg(BOT_END, res.toString());
+                    catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 } else {
                     sendHandlerMsg(BOT_CONTINUE, "SERVER ERROR 0X2H\n");
                     sendHandlerMsg(BOT_CONTINUE, response.body().source().readUtf8());
@@ -351,20 +367,15 @@ public class Chat extends AppCompatActivity {
                     return;
                 }
                 JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("model",mApi.model);
-                    jsonObject.put("prompt", buildPrompt());
-                    jsonObject.put("max_tokens",mApi.max_token);
-                    jsonObject.put("temperature",mApi.temperature);
-                    jsonObject.put("top_p",1);
-                    jsonObject.put("stream",mApi.stream);
-                    jsonObject.put("api_key",mApi.API_KEY);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
+                jsonObject.put("model",mApi.model);
+                jsonObject.put("prompt", buildPrompt());
+                jsonObject.put("max_tokens",mApi.max_token);
+                jsonObject.put("temperature",mApi.temperature);
+                jsonObject.put("top_p",1);
+                jsonObject.put("stream",mApi.stream);
+                jsonObject.put("api_key",mApi.API_KEY);
                 webSocketClient.send(jsonObject.toString());
                 sendHandlerMsg(USER_MSG, input.getText().toString());
-                input.setText("");
                 sendHandlerMsg(BOT_BEGIN, null);
             }else{
                 mApi.showMsg(this, "未连接至服务器");
