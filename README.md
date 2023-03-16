@@ -3,8 +3,10 @@ an android demo to use openai's api
 
 调用openai提供的接口，实现与chatGPT对话
 
-# !!!注意：api.openai.com已经被gfw dns阻断了
-最新版本可以选择使用服务器进行数据中转，以此绕开sni
+# !!!注意：https://api.openai.com 已经被GFW dns阻断了
+最新版本可以选择使用服务器运行springboot+websocket与APP即时通讯，进行数据中转，以此绕开sni
+
+配套springboot项目地址：https://github.com/icecoins/ChatGPT_Server
 
 # 注意： 关于api_key失效
 api_key一旦被官方检测到一个key被多人使用就会自动失效
