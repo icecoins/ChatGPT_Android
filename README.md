@@ -3,6 +3,20 @@ an android demo to use openai's api
 
 调用openai提供的接口，实现与chatGPT对话
 
+功能：
+
+✓ 可以免费使用，无需登录（在本人账号余额耗尽之前，默认配置即可）
+
+✓ 支持至Gpt-3.5模型（因为本人买不起plus）
+
+✓ 无需代理即可与ChatGPT对话（可以使用自己的服务器中转）
+
+✓ 支持带记忆的连续对话，可以随时清除记忆
+
+✓ 可以复制ai回答文本
+
+✓ 使用wss保护数据传输安全
+
 ![image](img/Screenshot_2023-03-22-23-56-09-609_com.chat.jpg)
 
 
