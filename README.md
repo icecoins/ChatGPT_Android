@@ -1,7 +1,7 @@
 # ChatGPT_Android
 an android demo to use openai's api
 
-调用openai提供的接口，实现与chatGPT对话
+调用openai提供的接口，实现与ChatGPT对话
 
 功能：
 
