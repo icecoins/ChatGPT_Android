@@ -15,6 +15,8 @@ an android demo to use openai's api
 
 ✓ 可以复制ai回答文本
 
+✓ 使用流式传输，ai的回答是动态连续的
+
 ✓ 使用wss保护数据传输安全
 
 ![image](img/Screenshot_2023-03-22-23-56-09-609_com.chat.jpg)
