@@ -19,13 +19,15 @@ an android demo to use openai's api
 
 ✓ 使用wss保护数据传输安全
 
+？ vits语音合成（试行），仅在 “英国 S1” 上运行。使用CPU进行推理，计算速度极为缓慢，不建议使用。
+
 ![image](img/Screenshot_2023-03-22-23-56-09-609_com.chat.jpg)
 
 
 ![image](img/Screenshot_2023-03-22-23-57-29-011_com.chat.jpg)
 
 
-# !!!注意：
+# !!!    注意：
 https://api.openai.com
 已经被GFW dns阻断了
 最新版本可以选择使用服务器运行springboot + websocket与APP即时通讯，进行数据中转，以此绕开sni
