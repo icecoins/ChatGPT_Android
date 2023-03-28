@@ -34,8 +34,8 @@ an android demo to use openai's api
 如果你希望可以使用自定义的通讯标记，请更改APP与springboot的源码并自行编译、运行
 
 # 关于直连官方接口失败：
-https://api.openai.com
-已经被GFW dns阻断了
+因为某些原因， https://api.openai.com 已经被GFW dns阻断了
+
 最新版本可以选择使用服务器运行springboot + websocket与APP即时通讯，进行数据中转，以此绕开sni
 
 配套springboot项目地址：https://github.com/icecoins/ChatGPT_Server
