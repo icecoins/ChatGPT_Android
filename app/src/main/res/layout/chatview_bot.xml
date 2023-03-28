@@ -6,17 +6,15 @@
     android:gravity="center_vertical"
     android:layout_marginEnd="50dp"
     android:padding="10dp">
-
     <ImageView
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="30dp"
         android:src="@mipmap/bot_icon"
-        android:layout_gravity="top"
-        android:layout_marginEnd="10dp"
+        android:layout_gravity="center"
         />
     <TextView
-        android:id="@+id/text_in"
+        android:id="@+id/text_bot_in"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="7"
@@ -25,6 +23,15 @@
         android:textColor="@color/black"
         android:gravity="start"
         android:background="#6DC5F1"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_gravity="center"
+        />
+    <ImageView
+        android:id="@+id/bot_say"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="20dp"
+        android:src="@mipmap/say"
+        android:layout_gravity="center"
         />
  </LinearLayout>

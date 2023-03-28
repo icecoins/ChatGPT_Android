@@ -6,24 +6,33 @@
     android:gravity="center_vertical"
     android:layout_marginStart="30dp"
     android:padding="10dp">
+    <ImageView
+        android:id="@+id/user_say"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="20dp"
+        android:src="@mipmap/say"
+        android:layout_gravity="center"
+        />
     <TextView
-        android:id="@+id/text_in"
+        android:id="@+id/text_user_in"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_weight="13"
         android:textSize="16sp"
         android:textIsSelectable="true"
         android:textColor="@color/black"
         android:gravity="start"
         android:background="#87E88B"
+        android:layout_marginStart="5dp"
         />
     <ImageView
         android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="50dp"
-        android:layout_gravity="top"
+        android:layout_weight="2"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
         android:scaleType="fitXY"
-        android:src="@mipmap/me_icon"
-        android:layout_marginStart="10dp"
+        android:src="@mipmap/user_icon"
+        android:layout_marginStart="5dp"
         />
 </LinearLayout>

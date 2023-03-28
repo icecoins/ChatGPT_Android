@@ -10,17 +10,28 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.List;
 import java.util.Objects;
+
 public class mApi {
+    public static List<ChatItem> chatItems;
     public static SharedPreferences sharedPreferences;
     private static Toast t1;
     public static long RequestTimeout = 3600;
     public static int max_token = 1000;
     public static int max_history = 30;
     public static double temperature = 0.5;
-    public static String model = "text-davinci-003", use_vps = "None", custom_url = "";
-    public static boolean stream = true;
+    public static String
+            model = "text-davinci-003",
+            use_vps = "None",
+            custom_url = "",
+            vits_model = "派蒙";
+    public static boolean
+            stream = true,
+            use_vits = false;
     public static String API_KEY = "";
     public static void showMsg(Context ct, String s){
         try{

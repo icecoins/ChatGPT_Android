@@ -2,8 +2,12 @@ package com.chat;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AsyncPlayer;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,11 +28,15 @@ import com.alibaba.fastjson.JSONObject;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,10 +51,15 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 public class Chat extends AppCompatActivity {
     static UUID uuid;
+    int selectedItemPosition = -1;
     boolean isBotTalking = false,
-            isConnecting = false;
+            isConnecting = false,
+            isFetchingSound = false;
+    File soundFile;
+    AsyncPlayer asyncPlayer;
+    MediaPlayer mediaPlayer;
+    FileOutputStream fileOutputStream;
     WebSocketClient webSocketClient;
-    List<ChatItem> chatItems;
     ArrayList<String> history;
     ChatItem current_bot_chat;
     ChatListAdapter chatListAdapter;
@@ -65,16 +78,22 @@ public class Chat extends AppCompatActivity {
             BOT_END = 3,
             CLEAR_HISTORY = 4;
     String serverURL = "",
-            bot_record = "";
+            bot_record = "",
+            soundFilePath,
+            SEND_END = "///**END_OF_SEND**///",
+            FILE_END = "///**END_OF_FILE**///",
+            FILE_ERROR = "///**FILE_ERROR**///";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         mApi.setFullscreen(this);
-        chatItems = new ArrayList<>();
+        asyncPlayer = new AsyncPlayer("AudioPlayer");
+        mediaPlayer = new MediaPlayer();
+        mApi.chatItems = new ArrayList<>();
         history = new ArrayList<>();
         result = findViewById(R.id.result);
-        chatListAdapter = new ChatListAdapter(chatItems,this);
+        chatListAdapter = new ChatListAdapter(this, this);
         result.setAdapter(chatListAdapter);
         input = findViewById(R.id.input);
         help = findViewById(R.id.help);
@@ -115,7 +134,7 @@ public class Chat extends AppCompatActivity {
                 if(null == webSocketClient){
                     mApi.showMsg(this, "尝试连接至服务器...");
                     connectToVps();
-                }else{
+                }else if(!webSocketClient.isClosed()){
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("已连接至服务器，确定强制重新连接吗？");
                     builder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
@@ -123,7 +142,9 @@ public class Chat extends AppCompatActivity {
                         mApi.showMsg(this, "重新连接服务器...");
                         webSocketClient = null;
                         isConnecting = false;
-                        isBotTalking = false;
+                        if(isBotTalking){
+                            sendHandlerMsg(BOT_END, "");
+                        }
                         connectToVps();
                     });
                     builder.show();
@@ -138,7 +159,7 @@ public class Chat extends AppCompatActivity {
                         // Bot begin printing
                         Log.e("BOT", "BEGIN");
                         isBotTalking = true;
-                        chatItems.add(current_bot_chat);
+                        mApi.chatItems.add(current_bot_chat);
                         refreshListview();
                         break;
                     case 1:
@@ -158,7 +179,7 @@ public class Chat extends AppCompatActivity {
                         ChatItem chatItem = new ChatItem();
                         chatItem.setType(1);
                         chatItem.setText(msg.obj.toString());
-                        chatItems.add(chatItem);
+                        mApi.chatItems.add(chatItem);
                         refreshListview();
                         break;
                     case 3:
@@ -187,6 +208,9 @@ public class Chat extends AppCompatActivity {
         };
         handler.sendEmptyMessage(BOT_END);
         showConfig();
+//        sendHandlerMsg(BOT_BEGIN, null);
+//        sendHandlerMsg(BOT_CONTINUE, "你怎么睡得着的？你这个年龄段，能睡得着觉？有点出息没有？");
+//        sendHandlerMsg(BOT_END, "");
     }
     void closeInputMethod() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -236,7 +260,6 @@ public class Chat extends AppCompatActivity {
             }).start();
         });
         isConnecting = true;
-
     }
     void refreshListview(){
         chatListAdapter.notifyDataSetChanged();
@@ -254,8 +277,6 @@ public class Chat extends AppCompatActivity {
     void showHelp(){
         AlertDialog.Builder b=new AlertDialog.Builder(this);
         View view = View.inflate(this, R.layout.layout_help, null);
-        TextView help = view.findViewById(R.id.layout_help_text);
-        help.setMovementMethod(ScrollingMovementMethod.getInstance());
         b.setView(view);
         b.setNegativeButton("已  阅", (dialog, which) -> dialog.dismiss());
         b.show();
@@ -392,7 +413,10 @@ public class Chat extends AppCompatActivity {
                         "text-davinci-003", "text-davinci-002")),
                 new ArrayList<>(Arrays.asList(true)),
                 new ArrayList<>(Arrays.asList(10, 20, 30, 50, 70, 100)),
-                new ArrayList<>(Arrays.asList("不使用中转", "自定义服务器", "英国 S1", "美国 S1", "美国 S2"))
+                new ArrayList<>(Arrays.asList("不使用中转", "自定义服务器", "英国 S1", "美国 S1", "美国 S2")),
+                new ArrayList<>(Arrays.asList(true, false)),
+                new ArrayList<>(Arrays.asList("派蒙"))
+                //new ArrayList<>(Arrays.asList("派蒙","可莉","纳西妲","莹","刻晴"))
         ));
         ArrayList<Spinner> spinners = new ArrayList<>();
         spinners.add(view.findViewById(R.id.config_timeout));
@@ -402,13 +426,16 @@ public class Chat extends AppCompatActivity {
         spinners.add(view.findViewById(R.id.config_stream));
         spinners.add(view.findViewById(R.id.config_history));
         spinners.add(view.findViewById(R.id.config_useVps));
+        spinners.add(view.findViewById(R.id.config_turn_on_vits));
+        spinners.add(view.findViewById(R.id.config_vits_model));
+
         EditText text = view.findViewById(R.id.config_custom_vps);
         text.setText(mApi.custom_url);
         for(int i = 0; i < list.size(); i++){
-            setSpinnerAdapter(spinners.get(i), list.get(i), i);
+            setSpinnerAdapter(spinners.get(i), list.get(i), i, view);
         }
     }
-    void setSpinnerAdapter(Spinner sp, ArrayList<?> arrayList, int flag){
+    void setSpinnerAdapter(Spinner sp, ArrayList<?> arrayList, int flag, View parent){
         ArrayAdapter<?> starAdapter =
                 new ArrayAdapter<>(this, R.layout.item_select, arrayList);
         starAdapter.setDropDownViewResource(R.layout.item_dropdown);
@@ -492,6 +519,40 @@ public class Chat extends AppCompatActivity {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                         mApi.use_vps = (String) sp.getSelectedItem();
+                        if(mApi.use_vps.equals("自定义服务器")){
+                            parent.findViewById(R.id.child_layout_custom_vps).setVisibility(View.VISIBLE);
+                        }else{
+                            parent.findViewById(R.id.child_layout_custom_vps).setVisibility(View.GONE);
+                        }
+                    }
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+                    }
+                });
+                break;
+            case 7:
+                sp.setSelection(arrayList.indexOf(mApi.use_vits));
+                sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        mApi.use_vits = (boolean) sp.getSelectedItem();
+                        if(mApi.use_vits){
+                            parent.findViewById(R.id.child_layout_vits_model).setVisibility(View.VISIBLE);
+                        }else{
+                            parent.findViewById(R.id.child_layout_vits_model).setVisibility(View.GONE);
+                        }
+                    }
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+                    }
+                });
+                break;
+            case 8:
+                sp.setSelection(arrayList.indexOf(mApi.vits_model));
+                sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        mApi.vits_model = (String) sp.getSelectedItem();
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> adapterView) {
@@ -523,13 +584,90 @@ public class Chat extends AppCompatActivity {
             ed.putString("stream", String.valueOf(mApi.stream));
             ed.putString("max_history", String.valueOf(mApi.max_history));
             ed.putString("use_vps", String.valueOf(mApi.use_vps));
-            ed.putString("custom_url", mApi.custom_url);
-            EditText custom_url = view.findViewById(R.id.config_custom_vps);
-            mApi.custom_url = custom_url.getText().toString().trim();
+            ed.putString("use_vits", String.valueOf(mApi.use_vits));
+            if(mApi.use_vps.equals("自定义服务器")){
+                ed.putString("custom_url", mApi.custom_url);
+                EditText custom_url = view.findViewById(R.id.config_custom_vps);
+                mApi.custom_url = custom_url.getText().toString().trim();
+            }
+            if(mApi.use_vits){
+                ed.putString("vits_model", mApi.vits_model);
+            }
             ed.apply();
-            title.setText("Chat : " + mApi.model);
+            title.setText("model : " + mApi.model);
         }).show();
     }
+
+    public void fetchSound(int position){
+        if(!mApi.use_vits){
+            mApi.showMsg(this, "未启用语音转换");
+            return;
+        }
+        if(!(mApi.use_vps.equals("英国 S1") || mApi.use_vps.equals("自定义服务器"))){
+            mApi.showMsg(this, "当前服务器不支持语音转换");
+            return;
+        }
+        if(null == webSocketClient){
+            mApi.showMsg(this, "未连接至服务器");
+            return;
+        }
+        if(isBotTalking){
+            mApi.showMsg(this, "请等待AI回答完毕");
+            return;
+        }
+        if(isConnecting){
+            mApi.showMsg(this, "请等待服务器连接成功");
+            return;
+        }
+        String [] permissions = new String[]{
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE"
+        };
+        ActivityCompat.requestPermissions(this, permissions,1);
+        selectedItemPosition = position;
+        if(mApi.chatItems.get(selectedItemPosition).isSoundDownloaded()){
+            mApi.showMsg(this, "开始播放语音");
+            new Thread(()->{
+                try {
+                    mediaPlayer.reset();
+                    mediaPlayer.setDataSource(mApi.chatItems.get(selectedItemPosition).getSoundPath());
+                    if(mediaPlayer.isPlaying()){
+                        mediaPlayer.stop();
+                    }else{
+                        mediaPlayer.setLooping(false);
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }).start();
+        }else {
+            if(isFetchingSound){
+                mApi.showMsg(this, "请等待音频下载完毕");
+                return;
+            }
+            mApi.showMsg(this, "开始文本转语音");
+            isFetchingSound = true;
+            new Thread(()->{
+                String id = UUID.randomUUID().toString();
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("type", "sound");
+                jsonObject.put("text", mApi.chatItems.get(selectedItemPosition).getText().trim());
+                jsonObject.put("id", id);
+                soundFilePath = getExternalCacheDir() + "/" + id + ".mp3";
+                mApi.chatItems.get(selectedItemPosition).setSoundPath(soundFilePath);
+                soundFile = new File(soundFilePath);
+                try {
+                    fileOutputStream = new FileOutputStream(soundFile);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                webSocketClient.send(jsonObject.toString());
+            }).start();
+        }
+    }
+
     @Override
     public void onBackPressed(){
         if(mBackPressed>System.currentTimeMillis()-2000){
@@ -540,6 +678,23 @@ public class Chat extends AppCompatActivity {
             mBackPressed=System.currentTimeMillis();
         }
     }
+
+    void deleteCacheFiles(){
+        System.out.println(getExternalCacheDir().getPath());
+        for(File file: new File(getExternalCacheDir().toString()).listFiles()){
+            if(file.exists() && file.isFile()){
+                System.out.println(file.getPath());
+                file.delete();
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        deleteCacheFiles();
+        super.onDestroy();
+    }
+
     class WebSocketClientEx extends WebSocketClient {
         WebSocketClientEx(URI uri){
             super(uri);
@@ -551,32 +706,81 @@ public class Chat extends AppCompatActivity {
         }
         @Override
         public void onMessage(String message) {
-            if(message.equals("///**1100101**///") && isBotTalking){
-                sendHandlerMsg(BOT_END, bot_record);
-                Log.e("Msg", bot_record);
-                bot_record = "";
-            }else {
-                bot_record += message;
-                sendHandlerMsg(BOT_CONTINUE, message);
-            }
+            new Thread(()->{
+                Log.e("MSG1", message);
+                if(isBotTalking){
+                    if(message.equals(SEND_END)){
+                        sendHandlerMsg(BOT_END, bot_record);
+                        //Log.e("Msg", bot_record);
+                        bot_record = "";
+                    }else {
+                        bot_record += message;
+                        sendHandlerMsg(BOT_CONTINUE, message);
+                    }
+                } else if (isFetchingSound) {
+                    try {
+                        isFetchingSound = false;
+                        fileOutputStream.flush();
+                        fileOutputStream.close();
+                        fileOutputStream = null;
+                        if(message.equals(FILE_END)){
+                            mApi.chatItems.get(selectedItemPosition).setSoundDownload(true);
+                            mApi.showMsg(Chat.this, "音频文件下载成功！");
+                        }else if(message.equals(FILE_ERROR)){
+                            soundFile.delete();
+                            mApi.showMsg(Chat.this, "拟合音频失败");
+                        }
+                    }catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }).start();
         }
+
         @Override
-        public void onClose(int code, String reason, boolean remote) {;
-            isConnecting = false;
-            isBotTalking = false;
-            webSocketClient = null;
-            mApi.showMsg(Chat.this, "服务器连接断开");
-            Log.e("Close", reason);
+        public void onMessage(ByteBuffer bytes) {
+            //Log.e("MSG2", bytes.toString());
+            new Thread(()->{
+                if(isFetchingSound){
+                    try {
+                        byte[] data = bytes.array();
+                        if(data.length > 0){
+                            fileOutputStream.write(data);
+                        }
+                    } catch (IOException e) {
+                        isFetchingSound = false;
+                        soundFile.delete();
+                        mApi.showMsg(Chat.this, "下载音频时出现异常 : " + e.getMessage());
+                    }
+                }
+            }).start();
+        }
+
+        @Override
+        public void onClose(int code, String reason, boolean remote) {
+            new Thread(()->{
+                isConnecting = false;
+                isBotTalking = false;
+                isFetchingSound = false;
+                webSocketClient = null;
+                fileOutputStream = null;
+                soundFile = null;
+                mApi.showMsg(Chat.this, "服务器连接断开");
+                Log.e("Close", reason);
+            }).start();
         }
         @Override
         public void onError(Exception ex) {
-            isConnecting = false;
-            isBotTalking = false;
-            webSocketClient.close();
-            webSocketClient = null;
-            mApi.showMsg(Chat.this, "");
-            mApi.showMsg(Chat.this, "服务器连接错误： " + ex.getMessage());
-            Log.e("Exception", ex.getMessage());
+            new Thread(()->{
+                isConnecting = false;
+                isBotTalking = false;
+                isFetchingSound = false;
+                webSocketClient = null;
+                fileOutputStream = null;
+                soundFile = null;
+                mApi.showMsg(Chat.this, "服务器连接错误： " + ex.getMessage());
+                Log.e("Exception", ex.getMessage());
+            }).start();
         }
     }
 }

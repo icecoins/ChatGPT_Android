@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
         mApi.max_history = Integer.parseInt(mApi.sharedPreferences.getString("max_history", "50"));
         mApi.use_vps = mApi.sharedPreferences.getString("use_vps", "英国 S1");
         mApi.custom_url = mApi.sharedPreferences.getString("custom_url", "");
+        mApi.use_vits = Boolean.parseBoolean((mApi.sharedPreferences.getString("use_vits", "false")));
+        mApi.vits_model = mApi.sharedPreferences.getString("vits_model", "派蒙");
         new Handler().postDelayed(()->{
             startActivity(new Intent(this, Chat.class));
         }, 500);

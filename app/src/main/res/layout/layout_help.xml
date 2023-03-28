@@ -107,18 +107,109 @@
             android:textColor="@color/black"
             tools:ignore="NestedWeights" />
     </LinearLayout>
-    <TextView
-        android:id="@+id/layout_help_text"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_weight="20"
         android:layout_height="0dp"
         android:layout_margin="10dp"
-        android:layout_gravity="center"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:scrollbars="vertical"
-        android:text="@string/help_text"
-        tools:ignore="NestedWeights" />
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:scrollbars="vertical"
+                android:text="Q:\t\t为什么老是崩溃？什么垃圾应用？\nA:\t\t水瓶九折样了没办法。\n\n"
+                tools:ignore="NestedWeights"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:scrollbars="vertical"
+                android:text="Q:\t\t为什么需要 API KEY ？如何获取 API KEY ？\nA:\t\tKEY用于请求调用ChatGPT模型的接口。在注册OpenAI账号之后可以生成自己的KEY。\n\n"
+                tools:ignore="NestedWeights"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:scrollbars="vertical"
+                android:text="Q:\t\t服务器中转是什么意思？\nA:\t\t不使用中转即手机直接与openai官网进行通信。开启服务器中转后，流量会通过服务器转向openai官网。如果选择使用自定义服务器，请正确填写服务器地址。\t\t\n\n"
+                tools:ignore="NestedWeights"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:scrollbars="vertical"
+                android:text="Q:\t\t思想活跃度是什么？\nA:\t\t活跃度越高，AI的回答越灵活多变。对于需要固定答案的问题请使用低的活跃度。\n\n"
+                tools:ignore="NestedWeights"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:scrollbars="vertical"
+                android:text="Q:\t\t最大文本长度是什么？\nA:\t\t文本长度指AI的回复字数。\n\nQ:\t\t超时时长是什么？\nA:\t\t即多长时间放弃等待回复。\n\n"
+                tools:ignore="NestedWeights"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:scrollbars="vertical"
+                android:text="Q:\t\t模型有什么区别\nA:\t\t建议选择最新的gpt-3.5，性能更好，最重要的是: 价格便宜。\n\n"
+                tools:ignore="NestedWeights"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:scrollbars="vertical"
+                android:text="Q:\t\t流式传输是什么？\nA:\t\t开启时可以连续接收回答。\n\n"
+                tools:ignore="NestedWeights"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:scrollbars="vertical"
+                android:text="Q:\t\t记忆对话数是什么？\nA:\t\t即让AI记住最近的多少次对话，该数大小与数据包大小正相关。\n\n"
+                tools:ignore="NestedWeights"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:scrollbars="vertical"
+                android:text="Q:\t\t语音转换是什么？\nA:\t\t即使用VITS模型对文本进行语音合成。需要注意的是，模型仅在 英国S1 中转服务器上运行，使用CPU进行计算，因此速度极慢，请尽量转换20字以内的短文本。\n\n"
+                tools:ignore="NestedWeights"
+                />
+        </LinearLayout>
+    </ScrollView>
     <TextView
         android:layout_width="wrap_content"
         android:layout_weight="1"

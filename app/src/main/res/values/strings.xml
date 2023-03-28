@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">chat</string>
-    <string name="help_text">Q:\t\t为什么老是崩溃？什么垃圾应用？\nA:\t\t水瓶九折样了没办法。\n\nQ:\t\t为什么需要 API KEY ？如何获取 API KEY ？\nA:\t\tKEY用于请求调用ChatGPT模型的接口。在注册OpenAI账号之后可以生成自己的KEY。\n\nQ:\t\t服务器中转是什么意思？\nA:\t\t不使用中转即手机直接与openai官网进行通信。开启服务器中转后，流量会通过服务器转向openai官网。如果选择使用自定义服务器，请正确填写服务器地址。\t\t\n\nQ:\t\t思想活跃度是什么？\nA:\t\t活跃度越高，AI的回答越灵活多变。对于需要固定答案的问题请使用低的活跃度。\n\nQ:\t\t最大文本长度是什么？\nA:\t\t文本长度指AI的回复字数。\n\nQ:\t\t超时时长是什么？\nA:\t\t即多长时间放弃等待回复。\n\nQ:\t\t模型有什么区别\nA:\t\t建议选择最新的gpt-3.5，性能更好，最重要的是: 价格便宜。\n\nQ:\t\t流式传输是什么？\nA:\t\t开启时可以连续接收回答。\n\nQ:\t\t记忆对话数是什么？\nA:\t\t即让AI记住最近的多少次对话，该数大小与数据包大小正相关。</string>
     <string name="github_link">https://github.com/icecoins/ChatGPT_Android</string>
     <string name="FAQ">F A Q</string>
     <string name="chat">ChatGPT</string>

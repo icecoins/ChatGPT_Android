@@ -3,28 +3,26 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
-import java.util.List;
 
 public class ChatListAdapter extends BaseAdapter {
-    private final List<ChatItem> chatItems;
     private final LayoutInflater inflater;
-
-    public ChatListAdapter(List<ChatItem> chatItems, Context context) {
-        this.chatItems = chatItems;
+    private final Chat chat;
+    public ChatListAdapter(Context context, Chat chat) {
         inflater = LayoutInflater.from(context);
+        this.chat = chat;
     }
 
     @Override
     public int getCount() {
-        return chatItems.size();
+        return mApi.chatItems.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return chatItems.get(i);
+        return mApi.chatItems.get(i);
     }
 
     @Override
@@ -34,22 +32,27 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View contentView, ViewGroup viewGroup) {
-        ViewHolder holder = null;
+        ViewHolder holder;
         if(contentView == null){
             if(getItemViewType(position) == 0){
                 holder = new ViewHolder();
                 contentView = inflater.inflate(R.layout.chatview_bot,null);
-                holder.title = (TextView) contentView.findViewById(R.id.text_in);
+                holder.text = contentView.findViewById(R.id.text_bot_in);
+                holder.say = contentView.findViewById(R.id.bot_say);
             }else {
                 holder = new ViewHolder();
-                contentView = inflater.inflate(R.layout.chatview_me,null);
-                holder.title = (TextView) contentView.findViewById(R.id.text_in);
+                contentView = inflater.inflate(R.layout.chatview_user,null);
+                holder.text = (TextView) contentView.findViewById(R.id.text_user_in);
+                holder.say = contentView.findViewById(R.id.user_say);
             }
             contentView.setTag(holder);
         }else {
             holder = (ViewHolder) contentView.getTag();
         }
-        holder.title.setText(chatItems.get(position).getText());
+        holder.say.setOnClickListener(v->{
+            chat.fetchSound(position);
+        });
+        holder.text.setText(mApi.chatItems.get(position).getText().trim());
         return contentView;
     }
 
@@ -59,11 +62,12 @@ public class ChatListAdapter extends BaseAdapter {
     }
     @Override
     public int getItemViewType(int position) {
-        ChatItem bean = chatItems.get(position);
+        ChatItem bean = mApi.chatItems.get(position);
         return bean.getType();
     }
 
     public static class ViewHolder{
-        public TextView title;
+        public TextView text;
+        public ImageView say;
     }
 }
