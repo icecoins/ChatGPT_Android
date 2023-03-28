@@ -19,15 +19,21 @@ an android demo to use openai's api
 
 ✓ 使用wss保护数据传输安全
 
-？ vits语音合成（试行），仅在 “英国 S1” 上运行。使用CPU进行推理，计算速度极为缓慢，不建议使用。
+？ vits语音合成（试行）。仅在 “英国 S1” 中转服务器 上运行。使用服务器CPU进行推理，计算速度极为缓慢，不建议使用。
 
 ![image](img/Screenshot_2023-03-22-23-56-09-609_com.chat.jpg)
 
 
 ![image](img/Screenshot_2023-03-22-23-57-29-011_com.chat.jpg)
 
+# 关于收到乱码
+如果你希望使用预置的中转服务器，请确保APP为github上的最新版本，见 https://github.com/icecoins/ChatGPT_Android/releases
 
-# !!!    注意：
+乱码可能原因：由于 APP内置的通讯标记 与 服务器内置的通讯标记 不匹配，导致APP无法正常接收对话数据
+
+如果你希望可以使用自定义的通讯标记，请更改APP与springboot的源码并自行编译、运行
+
+# 关于直连官方接口失败：
 https://api.openai.com
 已经被GFW dns阻断了
 最新版本可以选择使用服务器运行springboot + websocket与APP即时通讯，进行数据中转，以此绕开sni
@@ -38,7 +44,7 @@ https://api.openai.com
 
 当然，你可以选中“不使用中转”， 并在手机上设置好代理，APP会直接向openai发送请求
 
-# 注意： 关于api_key失效
+# 关于api_key失效
 api_key一旦被官方检测到一个key被多人使用就会自动失效
 
 一个openai账号可以维持最多五个api key，也就是说可以让五个人分别专用一个账号下不同的key
