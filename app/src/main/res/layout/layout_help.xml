@@ -205,7 +205,7 @@
                 android:textSize="16sp"
                 android:textColor="@color/black"
                 android:scrollbars="vertical"
-                android:text="Q:\t\t语音转换是什么？\nA:\t\t即使用VITS模型对文本进行语音合成。需要注意的是，模型仅在 英国S1 中转服务器上运行，使用CPU进行计算，因此速度极慢，请尽量转换20字以内的短文本。\n\n"
+                android:text="Q:\t\t语音转换是什么？\nA:\t\t即使用VITS模型对文本进行语音合成。需要注意的是，模型仅在 英国S1 中转服务器上运行，使用CPU进行计算，因此速度极慢，不建议使用。\n\n"
                 tools:ignore="NestedWeights"
                 />
         </LinearLayout>

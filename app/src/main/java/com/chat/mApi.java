@@ -28,7 +28,7 @@ public class mApi {
             model = "text-davinci-003",
             use_vps = "None",
             custom_url = "",
-            vits_model = "派蒙";
+            vits_speaker = "派蒙";
     public static boolean
             stream = true,
             use_vits = false;

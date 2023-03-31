@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -415,8 +414,8 @@ public class Chat extends AppCompatActivity {
                 new ArrayList<>(Arrays.asList(10, 20, 30, 50, 70, 100)),
                 new ArrayList<>(Arrays.asList("不使用中转", "自定义服务器", "英国 S1", "美国 S1", "美国 S2")),
                 new ArrayList<>(Arrays.asList(true, false)),
-                new ArrayList<>(Arrays.asList("派蒙"))
-                //new ArrayList<>(Arrays.asList("派蒙","可莉","纳西妲","莹","刻晴"))
+                //new ArrayList<>(Arrays.asList("派蒙"))
+                new ArrayList<>(Arrays.asList("派蒙","可莉","纳西妲","荧","刻晴"))
         ));
         ArrayList<Spinner> spinners = new ArrayList<>();
         spinners.add(view.findViewById(R.id.config_timeout));
@@ -548,11 +547,11 @@ public class Chat extends AppCompatActivity {
                 });
                 break;
             case 8:
-                sp.setSelection(arrayList.indexOf(mApi.vits_model));
+                sp.setSelection(arrayList.indexOf(mApi.vits_speaker));
                 sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                        mApi.vits_model = (String) sp.getSelectedItem();
+                        mApi.vits_speaker = (String) sp.getSelectedItem();
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> adapterView) {
@@ -591,7 +590,7 @@ public class Chat extends AppCompatActivity {
                 mApi.custom_url = custom_url.getText().toString().trim();
             }
             if(mApi.use_vits){
-                ed.putString("vits_model", mApi.vits_model);
+                ed.putString("vits_model", mApi.vits_speaker);
             }
             ed.apply();
             title.setText("model : " + mApi.model);
@@ -654,6 +653,7 @@ public class Chat extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("type", "sound");
                 jsonObject.put("text", mApi.chatItems.get(selectedItemPosition).getText().trim());
+                jsonObject.put("speaker", mApi.vits_speaker);
                 jsonObject.put("id", id);
                 soundFilePath = getExternalCacheDir() + "/" + id + ".mp3";
                 mApi.chatItems.get(selectedItemPosition).setSoundPath(soundFilePath);
