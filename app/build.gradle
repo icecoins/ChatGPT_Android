@@ -30,8 +30,8 @@ android {
         applicationId "com.chat"
         minSdk 27
         targetSdk 33
-        versionCode 28
-        versionName "2.3.4"
+        versionCode 29
+        versionName "2.4.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
