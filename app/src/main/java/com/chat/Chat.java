@@ -394,6 +394,7 @@ public class Chat extends AppCompatActivity {
                 jsonObject.put("top_p",1);
                 jsonObject.put("stream",mApi.stream);
                 jsonObject.put("api_key",mApi.API_KEY);
+                jsonObject.put("uuid", uuid);
                 webSocketClient.send(jsonObject.toString());
                 sendHandlerMsg(USER_MSG, input.getText().toString());
                 sendHandlerMsg(BOT_BEGIN, null);
@@ -655,6 +656,7 @@ public class Chat extends AppCompatActivity {
                 jsonObject.put("text", mApi.chatItems.get(selectedItemPosition).getText().trim());
                 jsonObject.put("speaker", mApi.vits_speaker);
                 jsonObject.put("id", id);
+                jsonObject.put("uuid", uuid);
                 soundFilePath = getExternalCacheDir() + "/" + id + ".mp3";
                 mApi.chatItems.get(selectedItemPosition).setSoundPath(soundFilePath);
                 soundFile = new File(soundFilePath);

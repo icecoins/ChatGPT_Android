@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
         mApi.showMsg(this, "开始载入本地配置");
         mApi.setFullscreen(this);
         mApi.sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
-        mApi.API_KEY = mApi.sharedPreferences.getString("key", "PicACG.2.2.1.3.3.4");
+        mApi.API_KEY = mApi.sharedPreferences.getString("key", "");
         mApi.RequestTimeout = Long.parseLong(mApi.sharedPreferences.getString("timeout", "5"));
         mApi.max_token = Integer.parseInt(mApi.sharedPreferences.getString("max_token", "1000"));
         mApi.temperature = Double.parseDouble(mApi.sharedPreferences.getString("temperature", "0.6"));
