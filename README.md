@@ -53,12 +53,6 @@ api_key一旦被官方检测到一个key被多人使用就会自动失效
 
 一个openai账号可以维持最多五个api key，也就是说可以让五个人分别专用一个账号下不同的key
 
-本App可以免费使用，在api key一栏填上
-
-PicACG.2.2.1.3.3.4
-
-然后使用预置的三个中转服务器之一即可（即默认配置）
-
 # usage
 check the configs first, confirm your api_key is available.
 
