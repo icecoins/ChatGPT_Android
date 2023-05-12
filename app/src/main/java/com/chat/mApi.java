@@ -10,9 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -34,27 +32,29 @@ public class mApi {
             use_vits = false;
     public static String API_KEY = "";
     public static void showMsg(Context ct, String s){
-        try{
-            if(Looper.myLooper() == null){
-                Looper.prepare();
-                if (t1 != null) {
-                    t1.cancel();
-                    t1 = null;
+        new Thread(()->{
+            try{
+                if(Looper.myLooper() == null){
+                    Looper.prepare();
+                    if (t1 != null) {
+                        t1.cancel();
+                        t1 = null;
+                    }
+                    t1= Toast.makeText(ct,s, Toast.LENGTH_SHORT);
+                    t1.show();
+                    Looper.loop();
+                }else{
+                    if (t1 != null) {
+                        t1.cancel();
+                        t1 = null;
+                    }
+                    t1= Toast.makeText(ct,s, Toast.LENGTH_SHORT);
+                    t1.show();
                 }
-                t1= Toast.makeText(ct,s, Toast.LENGTH_SHORT);
-                t1.show();
-                Looper.loop();
-            }else{
-                if (t1 != null) {
-                    t1.cancel();
-                    t1 = null;
-                }
-                t1= Toast.makeText(ct,s, Toast.LENGTH_SHORT);
-                t1.show();
+            }catch (Exception e){
+                e.printStackTrace();
             }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        }).start();
     }
 
     public static void setFullscreen(AppCompatActivity activity) {

@@ -3,7 +3,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AsyncPlayer;
@@ -22,7 +21,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.alibaba.fastjson.JSONObject;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -195,9 +193,9 @@ public class Chat extends AppCompatActivity {
                         break;
                     case 4:
                         // Delete History
-                        if(!history.isEmpty()){
-                            history.clear();
-                        }
+                        history.clear();
+                        mApi.chatItems.clear();
+                        refreshListview();
                         mApi.showMsg(Chat.this, "记忆已清除");
                         break;
                     default:

@@ -13,19 +13,24 @@
         android:src="@mipmap/bot_icon"
         android:layout_gravity="center"
         />
-    <TextView
-        android:id="@+id/text_bot_in"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="7"
-        android:textSize="15sp"
-        android:textIsSelectable="true"
-        android:textColor="@color/black"
-        android:gravity="start"
-        android:background="#6DC5F1"
-        android:layout_marginStart="5dp"
-        android:layout_gravity="center"
-        />
+        android:background="@drawable/radius_blue"
+        >
+        <TextView
+            android:id="@+id/text_bot_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textIsSelectable="true"
+            android:textColor="@color/black"
+            android:gravity="start"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            />
+    </LinearLayout>
     <ImageView
         android:id="@+id/bot_say"
         android:layout_width="0dp"
@@ -34,4 +39,4 @@
         android:src="@mipmap/say"
         android:layout_gravity="center"
         />
- </LinearLayout>
+</LinearLayout>
