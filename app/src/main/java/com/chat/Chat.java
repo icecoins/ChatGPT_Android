@@ -608,7 +608,8 @@ public class Chat extends AppCompatActivity {
                 ed.putString("vits_model", mApi.vits_speaker);
             }
             ed.apply();
-            title.setText("model : " + mApi.model);
+            String t = "model : " + mApi.model;
+            title.setText(t);
         }).show();
     }
 
@@ -696,12 +697,8 @@ public class Chat extends AppCompatActivity {
     }
 
     void deleteCacheFiles(){
-        try{
-            System.out.println(getExternalCacheDir().getPath());
-        }catch (NullPointerException e){
-            e.printStackTrace();
-        }
-        for(File file: Objects.requireNonNull(new File(getExternalCacheDir().toString()).listFiles())){
+        //System.out.println(Objects.requireNonNull(getExternalCacheDir()).getPath());
+        for(File file: Objects.requireNonNull(new File(Objects.requireNonNull(getExternalCacheDir()).toString()).listFiles())){
             if(file.exists() && file.isFile()){
                 System.out.println(file.getPath());
                 file.delete();
