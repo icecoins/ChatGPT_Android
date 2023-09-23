@@ -1,17 +1,20 @@
 package com.chat;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 public class ChatListAdapter extends BaseAdapter {
     private final LayoutInflater inflater;
     private final Chat chat;
+    Bitmap say_available;
     public ChatListAdapter(Context context, Chat chat) {
         inflater = LayoutInflater.from(context);
+        say_available = BitmapFactory.decodeResource(context.getResources(), R.mipmap.say_ex);
         this.chat = chat;
     }
 
@@ -42,12 +45,15 @@ public class ChatListAdapter extends BaseAdapter {
             }else {
                 holder = new ViewHolder();
                 contentView = inflater.inflate(R.layout.chatview_user,null);
-                holder.text = (TextView) contentView.findViewById(R.id.text_user_in);
+                holder.text = contentView.findViewById(R.id.text_user_in);
                 holder.say = contentView.findViewById(R.id.user_say);
             }
             contentView.setTag(holder);
         }else {
             holder = (ViewHolder) contentView.getTag();
+        }
+        if(mApi.chatItems.get(position).isSoundDownloaded()){
+            holder.say.setImageBitmap(say_available);
         }
         holder.say.setOnClickListener(v->{
             chat.fetchSound(position);

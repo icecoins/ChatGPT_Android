@@ -12,7 +12,6 @@
         android:layout_weight="1"
         android:layout_height="20dp"
         android:src="@mipmap/say"
-        android:layout_gravity="center"
         android:rotation="180"
         />
     <LinearLayout
@@ -39,7 +38,7 @@
         android:layout_width="0dp"
         android:layout_weight="2"
         android:layout_height="40dp"
-        android:layout_gravity="center"
+        android:layout_gravity="top"
         android:scaleType="fitXY"
         android:src="@mipmap/user_icon"
         android:layout_marginStart="5dp"
