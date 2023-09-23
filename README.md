@@ -3,7 +3,13 @@ an android demo to use openai's api
 
 调用openai提供的接口，实现与ChatGPT对话
 
-功能：
+## 更新：
+支持新模型的调用："gpt-3.5-turbo", "gpt-3.5-turbo-16k","gpt-3.5-turbo-instruct", "gpt-3.5-turbo-0613","gpt-3.5-turbo-16k-0613"
+
+## 修复：
+为解决对话少量乱序的问题，服务器将在每次对话发送完毕后进行完整重传，覆盖可能乱序的回复。
+
+## 功能：
 
 <del> ✓可以免费使用，无需登录（在本人账号余额耗尽之前，默认配置即可）</del>
 
