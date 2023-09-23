@@ -40,7 +40,7 @@ an android demo to use openai's api
 
 ✓ 使用wss保护数据传输安全
 
-？ vits语音合成（试行）。仅在 “英国 S1” 中转服务器 上运行。使用服务器CPU进行推理，计算速度极为缓慢，不建议使用。
+？ <del>vits语音合成（试行）。仅在 “英国 S1” 中转服务器 上运行。使用服务器CPU进行推理，计算速度极为缓慢，不建议使用。</del>
 
 ![image](img/config.jpg)
 
