@@ -1,13 +1,19 @@
 plugins {
     id 'com.android.application'
 }
+import com.android.build.OutputFile
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def storePath = properties.getProperty('keyStorePath')
 def alias = properties.getProperty('keyAlias')
 def storePwd = properties.getProperty('keyStorePwd')
 def aliasPwd = properties.getProperty('keyAliasPwd')
-
+def enableSeparateBuildPerCPUArchitecture = true
+def applicationName = "chat"
+def reactNativeArchitectures() {
+    def value = project.getProperties().get("reactNativeArchitectures")
+    return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+}
 android {
     signingConfigs {
         release {
@@ -25,7 +31,6 @@ android {
     }
     namespace 'com.chat'
     compileSdk 33
-
     defaultConfig {
         applicationId "com.chat"
         minSdk 27
@@ -34,13 +39,37 @@ android {
         versionName "2.4.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    splits {
+        abi {
+            reset()
+            enable enableSeparateBuildPerCPUArchitecture
+            universalApk true  // If true, also generate a universal APK
+            include (*reactNativeArchitectures())
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
             multiDexEnabled true
+        }
+    }
+    applicationVariants.all {
+        variant ->
+        variant.outputs.each {
+            output ->
+            def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
+            def abi = output.getFilter(OutputFile.ABI)
+            if (abi == null) {  // null for the universal-debug, universal-release variants
+                output.outputFileName =
+                        "${applicationName}-v${defaultConfig.versionName}-universal.apk"
+            } else {
+                output.versionCodeOverride =
+                        defaultConfig.versionCode * 1000 + versionCodes.get(abi)
+                output.outputFileName =
+                        "${applicationName}-v${defaultConfig.versionName}-${abi}.apk"
+            }
         }
     }
     compileOptions {

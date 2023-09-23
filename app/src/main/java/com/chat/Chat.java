@@ -5,13 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.AsyncPlayer;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -37,6 +35,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
@@ -53,11 +52,12 @@ public class Chat extends AppCompatActivity {
             isConnecting = false,
             isFetchingSound = false;
     File soundFile;
-    AsyncPlayer asyncPlayer;
     MediaPlayer mediaPlayer;
     FileOutputStream fileOutputStream;
     WebSocketClient webSocketClient;
-    ArrayList<String> history;
+    ArrayList<String> history,
+            models_old,
+            models_new;
     ChatItem current_bot_chat;
     ChatListAdapter chatListAdapter;
     ListView result;
@@ -69,23 +69,24 @@ public class Chat extends AppCompatActivity {
             connect;
     Handler handler;
     long mBackPressed;
-    int BOT_BEGIN = 0,
+    final static int BOT_BEGIN = 0,
             BOT_CONTINUE = 1,
             USER_MSG = 2,
             BOT_END = 3,
-            CLEAR_HISTORY = 4;
+            CLEAR_HISTORY = 4,
+            BOT_FULL_TEXT = 5;
     String serverURL = "",
             bot_record = "",
             soundFilePath,
             SEND_END = "///**END_OF_SEND**///",
             FILE_END = "///**END_OF_FILE**///",
-            FILE_ERROR = "///**FILE_ERROR**///";
+            FILE_ERROR = "///**FILE_ERROR**///",
+            FULL_TEXT = "///**FULL_TEXT**///";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         mApi.setFullscreen(this);
-        asyncPlayer = new AsyncPlayer("AudioPlayer");
         mediaPlayer = new MediaPlayer();
         mApi.chatItems = new ArrayList<>();
         history = new ArrayList<>();
@@ -148,23 +149,28 @@ public class Chat extends AppCompatActivity {
                 }
             }
         });
+        models_new = new ArrayList<>(Arrays.asList("gpt-3.5-turbo", "gpt-3.5-turbo-16k",
+                "gpt-3.5-turbo-0613","gpt-3.5-turbo-16k-0613","gpt-3.5-turbo-0301"));
+        models_old = new ArrayList<>(Arrays.asList("text-davinci-003", "text-davinci-002"));
         handler = new Handler(Looper.getMainLooper()){
             @Override
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 switch(msg.what){
-                    case 0:
+                    case BOT_BEGIN:
                         // Bot begin printing
-                        Log.e("BOT", "BEGIN");
+                        //Log.e("BOT", "BEGIN");
                         isBotTalking = true;
                         mApi.chatItems.add(current_bot_chat);
                         refreshListview();
                         break;
-                    case 1:
+
+                    case BOT_CONTINUE:
                         // Bot continue printing
                         current_bot_chat.appendText(msg.obj.toString());
                         refreshListview();
                         break;
-                    case 2:
+
+                    case USER_MSG:
                         // User' msg
                         closeInputMethod();
                         input.setText("");
@@ -179,9 +185,10 @@ public class Chat extends AppCompatActivity {
                         mApi.chatItems.add(chatItem);
                         refreshListview();
                         break;
-                    case 3:
+
+                    case BOT_END:
                         // Bot end printing
-                        Log.e("BOT", "END");
+                        //Log.e("BOT", "END");
                         isBotTalking = false;
                         if(!(null == msg.obj)){
                             history.add("A: " + msg.obj + "<|endoftext|>\n\n");
@@ -191,12 +198,19 @@ public class Chat extends AppCompatActivity {
                         current_bot_chat.setText("\t\t");
                         refreshListview();
                         break;
-                    case 4:
+
+                    case CLEAR_HISTORY:
                         // Delete History
                         history.clear();
                         mApi.chatItems.clear();
                         refreshListview();
                         mApi.showMsg(Chat.this, "记忆已清除");
+                        break;
+
+                    case BOT_FULL_TEXT:
+                        current_bot_chat.setText("");
+                        current_bot_chat.appendText(msg.obj.toString());
+                        refreshListview();
                         break;
                     default:
                         break;
@@ -205,9 +219,6 @@ public class Chat extends AppCompatActivity {
         };
         handler.sendEmptyMessage(BOT_END);
         showConfig();
-//        sendHandlerMsg(BOT_BEGIN, null);
-//        sendHandlerMsg(BOT_CONTINUE, "你怎么睡得着的？你这个年龄段，能睡得着觉？有点出息没有？");
-//        sendHandlerMsg(BOT_END, "");
     }
     void closeInputMethod() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -302,7 +313,7 @@ public class Chat extends AppCompatActivity {
         jsonObject.put("temperature",mApi.temperature);
         jsonObject.put("top_p",1);
         jsonObject.put("stream",mApi.stream);
-        if(mApi.model.equals("gpt-3.5-turbo") || mApi.model.equals("gpt-3.5-turbo-0301")){
+        if(models_new.contains(mApi.model)){
             endpoint = "https://api.openai.com/v1/chat/completions";
             List<JSONObject> list = new ArrayList<>();
             JSONObject msg1 = new JSONObject();
@@ -315,8 +326,13 @@ public class Chat extends AppCompatActivity {
             list.add(msg);
             jsonObject.put("messages", list);
             jsonObject.remove("prompt");
-        }else{
+        }else if(models_old.contains(mApi.model)){
             endpoint = "https://api.openai.com/v1/completions";
+        }else{
+            sendHandlerMsg(BOT_BEGIN, "");
+            sendHandlerMsg(BOT_CONTINUE, "错误：未知模型。\n若APP经过自定义，请确保修改后的代码运行无误。");
+            sendHandlerMsg(BOT_END, "");
+            return;
         }
         sendHandlerMsg(USER_MSG, input.getText().toString());
         Request request = new Request.Builder()
@@ -407,13 +423,13 @@ public class Chat extends AppCompatActivity {
                 new ArrayList<>(Arrays.asList(20, 50, 100, 200, 500, 1000, 2000)),
                 new ArrayList<>(Arrays.asList(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6,
                         0.7, 0.8, 0.9, 1.0)),
-                new ArrayList<>(Arrays.asList("gpt-3.5-turbo", "gpt-3.5-turbo-0301",
+                new ArrayList<>(Arrays.asList("gpt-3.5-turbo", "gpt-3.5-turbo-16k",
+                        "gpt-3.5-turbo-0613","gpt-3.5-turbo-16k-0613","gpt-3.5-turbo-0301",
                         "text-davinci-003", "text-davinci-002")),
                 new ArrayList<>(Arrays.asList(true)),
                 new ArrayList<>(Arrays.asList(10, 20, 30, 50, 70, 100)),
                 new ArrayList<>(Arrays.asList("不使用中转", "自定义服务器", "英国 S1", "美国 S1", "美国 S2")),
                 new ArrayList<>(Arrays.asList(true, false)),
-                //new ArrayList<>(Arrays.asList("派蒙"))
                 new ArrayList<>(Arrays.asList("派蒙","可莉","纳西妲","荧","刻晴"))
         ));
         ArrayList<Spinner> spinners = new ArrayList<>();
@@ -601,7 +617,7 @@ public class Chat extends AppCompatActivity {
             mApi.showMsg(this, "未启用语音转换");
             return;
         }
-        if(!(mApi.use_vps.equals("英国 S1") || mApi.use_vps.equals("自定义服务器"))){
+        if(!mApi.use_vps.equals("自定义服务器")){
             mApi.showMsg(this, "当前服务器不支持语音转换");
             return;
         }
@@ -680,8 +696,12 @@ public class Chat extends AppCompatActivity {
     }
 
     void deleteCacheFiles(){
-        System.out.println(getExternalCacheDir().getPath());
-        for(File file: new File(getExternalCacheDir().toString()).listFiles()){
+        try{
+            System.out.println(getExternalCacheDir().getPath());
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+        for(File file: Objects.requireNonNull(new File(getExternalCacheDir().toString()).listFiles())){
             if(file.exists() && file.isFile()){
                 System.out.println(file.getPath());
                 file.delete();
@@ -707,12 +727,16 @@ public class Chat extends AppCompatActivity {
         @Override
         public void onMessage(String message) {
             new Thread(()->{
-                Log.e("MSG1", message);
+                //Log.e("MSG1", message);
                 if(isBotTalking){
                     if(message.equals(SEND_END)){
                         sendHandlerMsg(BOT_END, bot_record);
                         //Log.e("Msg", bot_record);
                         bot_record = "";
+                    }
+                    else if(message.startsWith(FULL_TEXT)){
+                        sendHandlerMsg(BOT_FULL_TEXT, message.substring(FULL_TEXT.length()));
+                        //Log.e("FULL_TEXT", FULL_TEXT);
                     }else {
                         bot_record += message;
                         sendHandlerMsg(BOT_CONTINUE, message);
@@ -766,7 +790,7 @@ public class Chat extends AppCompatActivity {
                 fileOutputStream = null;
                 soundFile = null;
                 mApi.showMsg(Chat.this, "服务器连接断开");
-                Log.e("Close", reason);
+                //Log.e("Close", reason);
             }).start();
         }
         @Override
@@ -779,7 +803,7 @@ public class Chat extends AppCompatActivity {
                 fileOutputStream = null;
                 soundFile = null;
                 mApi.showMsg(Chat.this, "服务器连接错误： " + ex.getMessage());
-                Log.e("Exception", ex.getMessage());
+                //Log.e("Exception", ex.getMessage());
             }).start();
         }
     }
