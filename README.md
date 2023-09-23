@@ -6,13 +6,19 @@ an android demo to use openai's api
 ## 更新：
 支持新模型的调用："gpt-3.5-turbo", "gpt-3.5-turbo-16k","gpt-3.5-turbo-instruct", "gpt-3.5-turbo-0613","gpt-3.5-turbo-16k-0613"
 
+见：https://github.com/icecoins/ChatGPT_Android/issues/7
+
 ## 修复：
 为解决对话少量乱序的问题，服务器将在每次对话发送完毕后进行完整重传，覆盖可能乱序的回复。
 
 ## 后续计划
-1.中途停止输出的功能。
-2.对 gpt4 的支持。
-3.对国内某些 有公开接口的、价格较低的、效果较好的 大语言模型的支持。
+1. 中途停止输出的功能。
+见：https://github.com/icecoins/ChatGPT_Android/issues/5 、 https://github.com/icecoins/ChatGPT_Android/issues/6
+
+2. 对 gpt4 的支持。
+
+3. 对国内某些 有公开接口的、价格较低的、效果较好的 大语言模型的支持。
+
 
 ## 功能：
 
