@@ -78,7 +78,7 @@ public class Chat extends AppCompatActivity {
     String serverURL = "",
             bot_record = "",
             soundFilePath,
-            SEND_END = "///**END_OF_SEND**///",
+            //SEND_END = "///**END_OF_SEND**///",
             FILE_END = "///**END_OF_FILE**///",
             FILE_ERROR = "///**FILE_ERROR**///",
             FULL_TEXT = "///**FULL_TEXT**///";
@@ -161,6 +161,7 @@ public class Chat extends AppCompatActivity {
                         //Log.e("BOT", "BEGIN");
                         isBotTalking = true;
                         mApi.chatItems.add(current_bot_chat);
+                        current_bot_chat.setCurrentBot(true);
                         refreshListview();
                         break;
 
@@ -195,6 +196,7 @@ public class Chat extends AppCompatActivity {
                         }
                         current_bot_chat = new ChatItem();
                         current_bot_chat.setType(0);
+                        current_bot_chat.setCurrentBot(false);
                         current_bot_chat.setText("\t\t");
                         refreshListview();
                         break;
@@ -685,6 +687,15 @@ public class Chat extends AppCompatActivity {
         }
     }
 
+    public void stopPrinting(){
+        new Thread(()->{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("uuid", uuid);
+            jsonObject.put("type","stop");
+            webSocketClient.send(jsonObject.toString());
+        }).start();
+    }
+
     @Override
     public void onBackPressed(){
         if(mBackPressed>System.currentTimeMillis()-2000){
@@ -726,13 +737,15 @@ public class Chat extends AppCompatActivity {
             new Thread(()->{
                 //Log.e("MSG1", message);
                 if(isBotTalking){
-                    if(message.equals(SEND_END)){
-                        sendHandlerMsg(BOT_END, bot_record);
-                        //Log.e("Msg", bot_record);
-                        bot_record = "";
-                    }
-                    else if(message.startsWith(FULL_TEXT)){
+//                    if(message.equals(SEND_END)){
+//                        sendHandlerMsg(BOT_END, bot_record);
+//                        //Log.e("Msg", bot_record);
+//                        bot_record = "";
+//                    }
+
+                    if(message.startsWith(FULL_TEXT)){
                         sendHandlerMsg(BOT_FULL_TEXT, message.substring(FULL_TEXT.length()));
+                        sendHandlerMsg(BOT_END, null);
                         //Log.e("FULL_TEXT", FULL_TEXT);
                     }else {
                         bot_record += message;
@@ -760,7 +773,7 @@ public class Chat extends AppCompatActivity {
 
         @Override
         public void onMessage(ByteBuffer bytes) {
-            //Log.e("MSG2", bytes.toString());
+            //Log.e("MSG 2", bytes.toString());
             new Thread(()->{
                 if(isFetchingSound){
                     try {

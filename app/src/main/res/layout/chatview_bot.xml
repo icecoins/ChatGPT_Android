@@ -37,5 +37,6 @@
         android:layout_weight="1"
         android:layout_height="20dp"
         android:src="@mipmap/say"
+        android:layout_gravity="center"
         />
 </LinearLayout>

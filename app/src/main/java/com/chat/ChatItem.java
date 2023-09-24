@@ -5,6 +5,7 @@ public class ChatItem {
     private String text = "";
     private String soundPath = "";
     private boolean isSoundDownload = false;
+    private boolean isCurrentBot = false;
 
     public String getSoundPath() {
         return soundPath;
@@ -20,6 +21,13 @@ public class ChatItem {
 
     public void setSoundDownload(boolean soundDownload) {
         isSoundDownload = soundDownload;
+    }
+
+    public boolean isCurrentBot() {
+        return isCurrentBot;
+    }
+    public void setCurrentBot(boolean currentBot) {
+        isCurrentBot = currentBot;
     }
 
     public int getType() {
@@ -40,4 +48,5 @@ public class ChatItem {
     public void appendText(String text) {
         this.text += text;
     }
+
 }

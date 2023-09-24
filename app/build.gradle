@@ -35,8 +35,8 @@ android {
         applicationId "com.chat"
         minSdk 27
         targetSdk 33
-        versionCode 30
-        versionName "2.4.2"
+        versionCode 33
+        versionName "2.4.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     splits {
@@ -55,7 +55,7 @@ android {
             multiDexEnabled true
         }
     }
-    applicationVariants.all {
+    applicationVariants.configureEach {
         variant ->
         variant.outputs.each {
             output ->

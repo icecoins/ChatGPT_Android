@@ -36,6 +36,7 @@ public class ChatListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View contentView, ViewGroup viewGroup) {
         ViewHolder holder;
+        ChatItem currentItem = mApi.chatItems.get(position);
         if(contentView == null){
             if(getItemViewType(position) == 0){
                 holder = new ViewHolder();
@@ -52,13 +53,13 @@ public class ChatListAdapter extends BaseAdapter {
         }else {
             holder = (ViewHolder) contentView.getTag();
         }
-        if(mApi.chatItems.get(position).isSoundDownloaded()){
+        if(currentItem.isSoundDownloaded()){
             holder.say.setImageBitmap(say_available);
         }
         holder.say.setOnClickListener(v->{
             chat.fetchSound(position);
         });
-        holder.text.setText(mApi.chatItems.get(position).getText().trim());
+        holder.text.setText(currentItem.getText().trim());
         return contentView;
     }
 

@@ -17,7 +17,7 @@ import java.util.Objects;
 public class mApi {
     public static List<ChatItem> chatItems;
     public static SharedPreferences sharedPreferences;
-    private static Toast t1;
+    private static Toast toast;
     public static long RequestTimeout = 3600;
     public static int max_token = 1000;
     public static int max_history = 30;
@@ -36,20 +36,20 @@ public class mApi {
             try{
                 if(Looper.myLooper() == null){
                     Looper.prepare();
-                    if (t1 != null) {
-                        t1.cancel();
-                        t1 = null;
+                    if (toast != null) {
+                        toast.cancel();
+                        toast = null;
                     }
-                    t1= Toast.makeText(ct,s, Toast.LENGTH_SHORT);
-                    t1.show();
+                    toast = Toast.makeText(ct,s, Toast.LENGTH_SHORT);
+                    toast.show();
                     Looper.loop();
                 }else{
-                    if (t1 != null) {
-                        t1.cancel();
-                        t1 = null;
+                    if (toast != null) {
+                        toast.cancel();
+                        toast = null;
                     }
-                    t1= Toast.makeText(ct,s, Toast.LENGTH_SHORT);
-                    t1.show();
+                    toast = Toast.makeText(ct,s, Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             }catch (Exception e){
                 e.printStackTrace();
