@@ -74,6 +74,5 @@ public class mApi {
                         |View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         _window.setAttributes(params);
         activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
-        ActivityController.getInstance().addActivity(activity);
     }
 }

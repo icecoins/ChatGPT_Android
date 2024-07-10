@@ -4,10 +4,6 @@ plugins {
 import com.android.build.OutputFile
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
-def storePath = properties.getProperty('keyStorePath')
-def alias = properties.getProperty('keyAlias')
-def storePwd = properties.getProperty('keyStorePwd')
-def aliasPwd = properties.getProperty('keyAliasPwd')
 def enableSeparateBuildPerCPUArchitecture = true
 def applicationName = "chat"
 def reactNativeArchitectures() {
@@ -17,16 +13,8 @@ def reactNativeArchitectures() {
 android {
     signingConfigs {
         release {
-            storeFile file(storePath)
-            keyAlias alias
-            storePassword storePwd
-            keyPassword aliasPwd
         }
         debug {
-            storeFile file(storePath)
-            keyAlias alias
-            storePassword storePwd
-            keyPassword aliasPwd
         }
     }
     namespace 'com.chat'

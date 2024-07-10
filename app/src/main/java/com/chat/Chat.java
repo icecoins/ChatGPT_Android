@@ -78,7 +78,6 @@ public class Chat extends AppCompatActivity {
     String serverURL = "",
             bot_record = "",
             soundFilePath,
-            //SEND_END = "///**END_OF_SEND**///",
             FILE_END = "///**END_OF_FILE**///",
             FILE_ERROR = "///**FILE_ERROR**///",
             FULL_TEXT = "///**FULL_TEXT**///";
@@ -149,7 +148,8 @@ public class Chat extends AppCompatActivity {
                 }
             }
         });
-        models_new = new ArrayList<>(Arrays.asList("gpt-3.5-turbo", "gpt-3.5-turbo-16k",
+        models_new = new ArrayList<>(Arrays.asList("gpt-4o", "gpt-4-turbo", "gpt-4",
+                "gpt-3.5-turbo", "gpt-3.5-turbo-16k",
                 "gpt-3.5-turbo-0613","gpt-3.5-turbo-16k-0613","gpt-3.5-turbo-0301"));
         models_old = new ArrayList<>(Arrays.asList("text-davinci-003", "text-davinci-002"));
         handler = new Handler(Looper.getMainLooper()){
@@ -244,6 +244,9 @@ public class Chat extends AppCompatActivity {
                         break;
                     case "自定义服务器":
                         serverURL = mApi.custom_url;
+                        if(!serverURL.endsWith("/")){
+                            serverURL = serverURL + '/';
+                        }
                         break;
                     case "美国 S1":
                         serverURL = "wss://api.i64.cc/webSocket/";
@@ -261,11 +264,16 @@ public class Chat extends AppCompatActivity {
                         });
                     }else{
                         sendHandlerMsg(BOT_BEGIN, null);
+                        sendHandlerMsg(BOT_CONTINUE, new URI(serverURL + uuid).toString());
                         sendHandlerMsg(BOT_CONTINUE, "Failed to connect to the server");
                         sendHandlerMsg(BOT_END, null);
                     }
                 }catch (URISyntaxException | InterruptedException e){
-                    e.printStackTrace();
+                    sendHandlerMsg(BOT_BEGIN, null);
+                    sendHandlerMsg(BOT_CONTINUE, e.getMessage());
+                    sendHandlerMsg(BOT_END, null);
+                    //e.printStackTrace();
+
                 }
             }).start();
         });
@@ -293,7 +301,7 @@ public class Chat extends AppCompatActivity {
     }
     String buildPrompt(){
         StringBuilder prompt = new StringBuilder();
-        if(history.size() > 0){
+        if(!history.isEmpty()){
             for(String s: history){
                 prompt.append(s);
             }
@@ -318,10 +326,6 @@ public class Chat extends AppCompatActivity {
         if(models_new.contains(mApi.model)){
             endpoint = "https://api.openai.com/v1/chat/completions";
             List<JSONObject> list = new ArrayList<>();
-            JSONObject msg1 = new JSONObject();
-            msg1.put("role", "user");
-            msg1.put("content", "我是小明");
-            list.add(msg1);
             JSONObject msg = new JSONObject();
             msg.put("role", "user");
             msg.put("content", jsonObject.getString("prompt"));
@@ -332,7 +336,7 @@ public class Chat extends AppCompatActivity {
             endpoint = "https://api.openai.com/v1/completions";
         }else{
             sendHandlerMsg(BOT_BEGIN, "");
-            sendHandlerMsg(BOT_CONTINUE, "错误：未知模型。\n若APP经过自定义，请确保修改后的代码运行无误。");
+            sendHandlerMsg(BOT_CONTINUE, "错误：未知模型。\n若APP经过自定义，请确保修改后的代码的正确性。");
             sendHandlerMsg(BOT_END, "");
             return;
         }
@@ -364,7 +368,8 @@ public class Chat extends AppCompatActivity {
                                     .replace('[',' ')
                                     .replace(']',' '));
                             String s;
-                            if(mApi.model.equals("gpt-3.5-turbo") || mApi.model.equals("gpt-3.5-turbo-0301")){
+                            if(mApi.model.equals("gpt-4o") || mApi.model.equals("gpt-4-turbo") || mApi.model.equals("gpt-4")
+                                    || mApi.model.equals("gpt-3.5-turbo") || mApi.model.equals("gpt-3.5-turbo-0301")){
                                 s = JSONObject.parseObject(choices.getString("delta")).getString("content");
                             }else {
                                 s = choices.getString("text");
@@ -394,7 +399,7 @@ public class Chat extends AppCompatActivity {
 
     }
     void chatGPT_vps(){
-        if(input.getText().toString().equals("")){
+        if(input.getText().toString().isEmpty()){
             mApi.showMsg(this, "请先输入文本");
         }else{
             if(!(null == webSocketClient) && webSocketClient.isOpen()){
@@ -425,12 +430,13 @@ public class Chat extends AppCompatActivity {
                 new ArrayList<>(Arrays.asList(20, 50, 100, 200, 500, 1000, 2000)),
                 new ArrayList<>(Arrays.asList(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6,
                         0.7, 0.8, 0.9, 1.0)),
-                new ArrayList<>(Arrays.asList("gpt-3.5-turbo", "gpt-3.5-turbo-16k",
+                new ArrayList<>(Arrays.asList("gpt-4o", "gpt-4-turbo", "gpt-4",
+                        "gpt-3.5-turbo", "gpt-3.5-turbo-16k",
                         "gpt-3.5-turbo-0613","gpt-3.5-turbo-16k-0613","gpt-3.5-turbo-0301",
                         "text-davinci-003", "text-davinci-002")),
                 new ArrayList<>(Arrays.asList(true)),
                 new ArrayList<>(Arrays.asList(10, 20, 30, 50, 70, 100)),
-                new ArrayList<>(Arrays.asList("不使用中转", "自定义服务器", "英国 S1", "美国 S1", "美国 S2")),
+                new ArrayList<>(Arrays.asList("不使用中转", "自定义服务器")),
                 new ArrayList<>(Arrays.asList(true, false)),
                 new ArrayList<>(Arrays.asList("派蒙","可莉","纳西妲","荧","刻晴"))
         ));
@@ -583,7 +589,7 @@ public class Chat extends AppCompatActivity {
         View view = View.inflate(this, R.layout.layout_config, null);
         initConfigs(view);
         final EditText config_key = view.findViewById(R.id.config_key);
-        if(!(null == mApi.API_KEY) && !mApi.API_KEY.equals("")){
+        if(!(null == mApi.API_KEY) && !mApi.API_KEY.isEmpty()){
             config_key.setText(mApi.API_KEY);
         }
         builder.setView(view);
@@ -699,7 +705,6 @@ public class Chat extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         if(mBackPressed>System.currentTimeMillis()-2000){
-            ActivityController.getInstance().killAllActivity();
             super.onBackPressed();
         }else{
             mApi.showMsg(this,"连续返回两次退出APP");
@@ -720,7 +725,22 @@ public class Chat extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         deleteCacheFiles();
+        System.exit(0);
         super.onDestroy();
+    }
+
+    static JSONObject getPingJson(){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type","ping");
+        jsonObject.put("model",mApi.model);
+        jsonObject.put("prompt", "ping");
+        jsonObject.put("max_tokens",mApi.max_token);
+        jsonObject.put("temperature",mApi.temperature);
+        jsonObject.put("top_p",1);
+        jsonObject.put("stream",mApi.stream);
+        jsonObject.put("api_key",mApi.API_KEY);
+        jsonObject.put("uuid", uuid);
+        return jsonObject;
     }
 
     class WebSocketClientEx extends WebSocketClient {
@@ -734,15 +754,14 @@ public class Chat extends AppCompatActivity {
         }
         @Override
         public void onMessage(String message) {
-            new Thread(()->{
-                //Log.e("MSG1", message);
+            new Handler(Looper.getMainLooper()).post(()->{
+                if(message.contains("pong")){
+                    new Handler(Looper.getMainLooper()).postDelayed(()->{
+                        webSocketClient.send(getPingJson().toString());
+                    }, 500);
+                    return;
+                }
                 if(isBotTalking){
-//                    if(message.equals(SEND_END)){
-//                        sendHandlerMsg(BOT_END, bot_record);
-//                        //Log.e("Msg", bot_record);
-//                        bot_record = "";
-//                    }
-
                     if(message.startsWith(FULL_TEXT)){
                         sendHandlerMsg(BOT_FULL_TEXT, message.substring(FULL_TEXT.length()));
                         sendHandlerMsg(BOT_END, null);
@@ -751,7 +770,8 @@ public class Chat extends AppCompatActivity {
                         bot_record += message;
                         sendHandlerMsg(BOT_CONTINUE, message);
                     }
-                } else if (isFetchingSound) {
+                }
+                else if (isFetchingSound) {
                     try {
                         isFetchingSound = false;
                         fileOutputStream.flush();
@@ -768,12 +788,11 @@ public class Chat extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                 }
-            }).start();
+            });
         }
 
         @Override
         public void onMessage(ByteBuffer bytes) {
-            //Log.e("MSG 2", bytes.toString());
             new Thread(()->{
                 if(isFetchingSound){
                     try {
@@ -800,7 +819,6 @@ public class Chat extends AppCompatActivity {
                 fileOutputStream = null;
                 soundFile = null;
                 mApi.showMsg(Chat.this, "服务器连接断开");
-                //Log.e("Close", reason);
             }).start();
         }
         @Override
@@ -813,7 +831,6 @@ public class Chat extends AppCompatActivity {
                 fileOutputStream = null;
                 soundFile = null;
                 mApi.showMsg(Chat.this, "服务器连接错误： " + ex.getMessage());
-                //Log.e("Exception", ex.getMessage());
             }).start();
         }
     }
