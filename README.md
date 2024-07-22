@@ -4,7 +4,14 @@ an android demo to use openai's api
 调用openai提供的接口，实现与ChatGPT对话
 
 ## 更新：
-支持新模型的调用："gpt-3.5-turbo", "gpt-3.5-turbo-16k","gpt-3.5-turbo-instruct", "gpt-3.5-turbo-0613","gpt-3.5-turbo-16k-0613"
+新：
+
+1.支持新模型的调用："gpt-4o", "gpt-4-turbo", "gpt-4"
+
+2.增加了保活机制，连接断开的概率降低了
+
+
+旧：支持新模型的调用："gpt-3.5-turbo", "gpt-3.5-turbo-16k","gpt-3.5-turbo-instruct", "gpt-3.5-turbo-0613","gpt-3.5-turbo-16k-0613"
 
 见：https://github.com/icecoins/ChatGPT_Android/issues/7
 
