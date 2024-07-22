@@ -430,7 +430,9 @@ public class Chat extends AppCompatActivity {
                 new ArrayList<>(Arrays.asList(20, 50, 100, 200, 500, 1000, 2000)),
                 new ArrayList<>(Arrays.asList(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6,
                         0.7, 0.8, 0.9, 1.0)),
-                new ArrayList<>(Arrays.asList("gpt-4o", "gpt-4-turbo", "gpt-4",
+                new ArrayList<>(Arrays.asList(
+                        "gpt-4o-mini", "gpt-4o-mini-2024-07-18",
+                        "gpt-4o", "gpt-4-turbo", "gpt-4",
                         "gpt-3.5-turbo", "gpt-3.5-turbo-16k",
                         "gpt-3.5-turbo-0613","gpt-3.5-turbo-16k-0613","gpt-3.5-turbo-0301",
                         "text-davinci-003", "text-davinci-002")),
